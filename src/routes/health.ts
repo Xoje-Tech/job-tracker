@@ -1,0 +1,17 @@
+import { Router } from "express";
+import { prisma } from "../lib/prisma.js";
+
+export const healthRouter = Router();
+
+healthRouter.get("/", (_req, res) => {
+  res.json({ status: "ok", service: "job-tracker", version: "0.1.0" });
+});
+
+healthRouter.get("/db", async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: "ok", database: "connected" });
+  } catch {
+    res.status(503).json({ status: "error", database: "disconnected" });
+  }
+});

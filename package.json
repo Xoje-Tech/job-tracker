@@ -1,0 +1,66 @@
+{
+  "name": "job-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI-powered job search tracker with CLI, API, and agent integration",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint 'src/**/*.ts' 'cli/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' 'cli/**/*.ts' --fix",
+    "format": "prettier --write 'src/**/*.ts' 'cli/**/*.ts'",
+    "format:check": "prettier --check 'src/**/*.ts' 'cli/**/*.ts'",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "cli": "tsx cli/index.ts",
+    "typecheck": "tsc --noEmit && echo 'Type check passed'"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.9.0",
+      "onFail": "download"
+    }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "commander": "^13.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.22.0",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^26.0.1",
+    "@types/pg": "^8.20.0",
+    "@types/supertest": "^7.0.0",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@vitest/coverage-v8": "^3.0.0",
+    "prisma": "^7.8.0",
+    "supertest": "^7.1.0",
+    "tsx": "^4.22.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
