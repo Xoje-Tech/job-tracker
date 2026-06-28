@@ -6,7 +6,7 @@ import { cleanupTestData, createTestJob } from "../factories.js";
 
 let dbAvailable = true;
 try {
-  await prisma.$connect();
+  await prisma.$queryRaw`SELECT 1`;
 } catch {
   dbAvailable = false;
 }

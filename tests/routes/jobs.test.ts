@@ -6,7 +6,7 @@ import { prisma } from "../../src/lib/prisma.js";
 // Skip DB tests if no database is available
 let dbAvailable = true;
 try {
-  await prisma.$connect();
+  await prisma.$queryRaw`SELECT 1`;
 } catch {
   dbAvailable = false;
 }
