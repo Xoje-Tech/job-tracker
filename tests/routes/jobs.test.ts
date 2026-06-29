@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest";
 import request from "supertest";
 import { app } from "../../src/server.js";
-import { prisma } from "../../src/lib/prisma.js";
+import { prisma } from "../../src/shared/lib/prisma.js";
 
 // Skip DB tests if no database is available
 let dbAvailable = true;

@@ -5,19 +5,14 @@ export class AppError extends Error {
   constructor(
     public statusCode: number,
     message: string,
-    public details?: unknown
+    public details?: unknown,
   ) {
     super(message);
     this.name = "AppError";
   }
 }
 
-export function errorHandler(
-  err: Error,
-  _req: Request,
-  res: Response,
-  _next: NextFunction
-): void {
+export function errorHandler(err: Error, _req: Request, res: Response, _next: NextFunction): void {
   if (err instanceof ZodError) {
     res.status(400).json({
       error: "Validation Error",

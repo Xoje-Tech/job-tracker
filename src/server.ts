@@ -2,13 +2,13 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import { env } from "./config/env.js";
-import { errorHandler, notFoundHandler } from "./middleware/error.js";
-import { healthRouter } from "./routes/health.js";
-import { jobsRouter } from "./routes/jobs.js";
-import { applicationsRouter } from "./routes/applications.js";
-import { companiesRouter } from "./routes/companies.js";
-import { openapiRouter } from "./routes/openapi.js";
+import { env } from "./shared/config/env.js";
+import { errorHandler, notFoundHandler } from "./shared/middleware/error.js";
+import { healthRouter } from "./shared/routes/health.js";
+import { jobsRouter } from "./modules/jobs/interface/routes/jobs-router.js";
+import { applicationsRouter } from "./modules/applications/interface/routes/applications-router.js";
+import { companiesRouter } from "./modules/companies/interface/routes/companies-router.js";
+import { openapiRouter } from "./shared/routes/openapi.js";
 
 export function createApp() {
   const app = express();

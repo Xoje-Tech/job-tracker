@@ -54,9 +54,43 @@ const openapiSpec = {
         tags: ["Jobs"],
         summary: "List jobs",
         parameters: [
-          { name: "status", in: "query", schema: { type: "string", enum: ["SAVED", "INTERESTING", "APPLIED", "INTERVIEW", "OFFER", "REJECTED", "WITHDRAWN", "EXPIRED"] } },
+          {
+            name: "status",
+            in: "query",
+            schema: {
+              type: "string",
+              enum: [
+                "SAVED",
+                "INTERESTING",
+                "APPLIED",
+                "INTERVIEW",
+                "OFFER",
+                "REJECTED",
+                "WITHDRAWN",
+                "EXPIRED",
+              ],
+            },
+          },
           { name: "company", in: "query", schema: { type: "string" } },
-          { name: "source", in: "query", schema: { type: "string", enum: ["MANUAL", "LINKEDIN", "INDEED", "INFOJOBS", "GLASSDOOR", "WELCOME_TO_THE_JUNTLE", "REMOTE_OK", "SCRAPER", "API_REFERRAL", "OTHER"] } },
+          {
+            name: "source",
+            in: "query",
+            schema: {
+              type: "string",
+              enum: [
+                "MANUAL",
+                "LINKEDIN",
+                "INDEED",
+                "INFOJOBS",
+                "GLASSDOOR",
+                "WELCOME_TO_THE_JUNTLE",
+                "REMOTE_OK",
+                "SCRAPER",
+                "API_REFERRAL",
+                "OTHER",
+              ],
+            },
+          },
           { name: "limit", in: "query", schema: { type: "integer", default: 50 } },
           { name: "offset", in: "query", schema: { type: "integer", default: 0 } },
         ],
@@ -96,7 +130,21 @@ const openapiSpec = {
                   remote: { type: "string", enum: ["ONSITE", "REMOTE", "HYBRID", "UNKNOWN"] },
                   url: { type: "string" },
                   description: { type: "string" },
-                  source: { type: "string", enum: ["MANUAL", "LINKEDIN", "INDEED", "INFOJOBS", "GLASSDOOR", "WELCOME_TO_THE_JUNTLE", "REMOTE_OK", "SCRAPER", "API_REFERRAL", "OTHER"] },
+                  source: {
+                    type: "string",
+                    enum: [
+                      "MANUAL",
+                      "LINKEDIN",
+                      "INDEED",
+                      "INFOJOBS",
+                      "GLASSDOOR",
+                      "WELCOME_TO_THE_JUNTLE",
+                      "REMOTE_OK",
+                      "SCRAPER",
+                      "API_REFERRAL",
+                      "OTHER",
+                    ],
+                  },
                   salaryMin: { type: "number" },
                   salaryMax: { type: "number" },
                   priority: { type: "string", enum: ["LOW", "MEDIUM", "HIGH", "URGENT"] },
@@ -131,7 +179,14 @@ const openapiSpec = {
         responses: {
           "200": {
             description: "Job details",
-            content: { "application/json": { schema: { type: "object", properties: { data: { $ref: "#/components/schemas/Job" } } } } },
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: { data: { $ref: "#/components/schemas/Job" } },
+                },
+              },
+            },
           },
           "404": { description: "Job not found" },
         },
@@ -148,7 +203,19 @@ const openapiSpec = {
                 properties: {
                   title: { type: "string" },
                   company: { type: "string" },
-                  status: { type: "string", enum: ["SAVED", "INTERESTING", "APPLIED", "INTERVIEW", "OFFER", "REJECTED", "WITHDRAWN", "EXPIRED"] },
+                  status: {
+                    type: "string",
+                    enum: [
+                      "SAVED",
+                      "INTERESTING",
+                      "APPLIED",
+                      "INTERVIEW",
+                      "OFFER",
+                      "REJECTED",
+                      "WITHDRAWN",
+                      "EXPIRED",
+                    ],
+                  },
                   priority: { type: "string", enum: ["LOW", "MEDIUM", "HIGH", "URGENT"] },
                   salaryMin: { type: "number" },
                   salaryMax: { type: "number" },
@@ -179,7 +246,27 @@ const openapiSpec = {
         tags: ["Applications"],
         summary: "List applications",
         parameters: [
-          { name: "status", in: "query", schema: { type: "string", enum: ["DRAFT", "SUBMITTED", "SCREENING", "PHONE_SCREEN", "TECHNICAL", "ONSITE", "OFFER_RECEIVED", "NEGOTIATION", "ACCEPTED", "REJECTED", "GHOSTED", "WITHDRAWN"] } },
+          {
+            name: "status",
+            in: "query",
+            schema: {
+              type: "string",
+              enum: [
+                "DRAFT",
+                "SUBMITTED",
+                "SCREENING",
+                "PHONE_SCREEN",
+                "TECHNICAL",
+                "ONSITE",
+                "OFFER_RECEIVED",
+                "NEGOTIATION",
+                "ACCEPTED",
+                "REJECTED",
+                "GHOSTED",
+                "WITHDRAWN",
+              ],
+            },
+          },
           { name: "limit", in: "query", schema: { type: "integer", default: 50 } },
           { name: "offset", in: "query", schema: { type: "integer", default: 0 } },
         ],
@@ -226,7 +313,23 @@ const openapiSpec = {
                 type: "object",
                 required: ["status"],
                 properties: {
-                  status: { type: "string", enum: ["DRAFT", "SUBMITTED", "SCREENING", "PHONE_SCREEN", "TECHNICAL", "ONSITE", "OFFER_RECEIVED", "NEGOTIATION", "ACCEPTED", "REJECTED", "GHOSTED", "WITHDRAWN"] },
+                  status: {
+                    type: "string",
+                    enum: [
+                      "DRAFT",
+                      "SUBMITTED",
+                      "SCREENING",
+                      "PHONE_SCREEN",
+                      "TECHNICAL",
+                      "ONSITE",
+                      "OFFER_RECEIVED",
+                      "NEGOTIATION",
+                      "ACCEPTED",
+                      "REJECTED",
+                      "GHOSTED",
+                      "WITHDRAWN",
+                    ],
+                  },
                   note: { type: "string" },
                 },
               },
@@ -252,7 +355,18 @@ const openapiSpec = {
                 type: "object",
                 required: ["type", "scheduledAt"],
                 properties: {
-                  type: { type: "string", enum: ["PHONE", "VIDEO", "ONSITE", "TECHNICAL", "CULTURE_FIT", "PANEL", "FINAL"] },
+                  type: {
+                    type: "string",
+                    enum: [
+                      "PHONE",
+                      "VIDEO",
+                      "ONSITE",
+                      "TECHNICAL",
+                      "CULTURE_FIT",
+                      "PANEL",
+                      "FINAL",
+                    ],
+                  },
                   scheduledAt: { type: "string", format: "date-time" },
                   duration: { type: "integer", description: "Duration in minutes" },
                   interviewer: { type: "string" },
@@ -295,7 +409,10 @@ const openapiSpec = {
                   name: { type: "string" },
                   website: { type: "string" },
                   industry: { type: "string" },
-                  size: { type: "string", enum: ["UNKNOWN", "STARTUP", "SMALL", "MEDIUM", "LARGE", "ENTERPRISE"] },
+                  size: {
+                    type: "string",
+                    enum: ["UNKNOWN", "STARTUP", "SMALL", "MEDIUM", "LARGE", "ENTERPRISE"],
+                  },
                   description: { type: "string" },
                 },
               },
@@ -334,9 +451,35 @@ const openapiSpec = {
           description: { type: "string", nullable: true },
           salaryMin: { type: "number", nullable: true },
           salaryMax: { type: "number", nullable: true },
-          status: { type: "string", enum: ["SAVED", "INTERESTING", "APPLIED", "INTERVIEW", "OFFER", "REJECTED", "WITHDRAWN", "EXPIRED"] },
+          status: {
+            type: "string",
+            enum: [
+              "SAVED",
+              "INTERESTING",
+              "APPLIED",
+              "INTERVIEW",
+              "OFFER",
+              "REJECTED",
+              "WITHDRAWN",
+              "EXPIRED",
+            ],
+          },
           priority: { type: "string", enum: ["LOW", "MEDIUM", "HIGH", "URGENT"] },
-          source: { type: "string", enum: ["MANUAL", "LINKEDIN", "INDEED", "INFOJOBS", "GLASSDOOR", "WELCOME_TO_THE_JUNTLE", "REMOTE_OK", "SCRAPER", "API_REFERRAL", "OTHER"] },
+          source: {
+            type: "string",
+            enum: [
+              "MANUAL",
+              "LINKEDIN",
+              "INDEED",
+              "INFOJOBS",
+              "GLASSDOOR",
+              "WELCOME_TO_THE_JUNTLE",
+              "REMOTE_OK",
+              "SCRAPER",
+              "API_REFERRAL",
+              "OTHER",
+            ],
+          },
           appliedAt: { type: "string", format: "date-time", nullable: true },
           archivedAt: { type: "string", format: "date-time", nullable: true },
           createdAt: { type: "string", format: "date-time" },
@@ -349,7 +492,10 @@ const openapiSpec = {
 
 export const openapiRouter = Router();
 openapiRouter.use("/", swaggerUi.serve);
-openapiRouter.get("/", swaggerUi.setup(openapiSpec, {
-  customSiteTitle: "Job Tracker API",
-  customCss: ".swagger-ui .topbar { display: none }",
-}));
+openapiRouter.get(
+  "/",
+  swaggerUi.setup(openapiSpec, {
+    customSiteTitle: "Job Tracker API",
+    customCss: ".swagger-ui .topbar { display: none }",
+  }),
+);

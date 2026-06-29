@@ -1,6 +1,6 @@
 import { app } from "./server.js";
-import { env } from "./config/env.js";
-import { prisma } from "./lib/prisma.js";
+import { env } from "./shared/config/env.js";
+import { prisma } from "./shared/lib/prisma.js";
 
 async function bootstrap(): Promise<void> {
   try {
