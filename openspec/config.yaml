@@ -11,7 +11,7 @@ stack:
   linting: eslint-prettier
   containerization: docker-compose
 strict_tdd: true
-persistence: openspec
+persistence: hybrid
 conventions:
   api_versioning: v1
   module_system: esm

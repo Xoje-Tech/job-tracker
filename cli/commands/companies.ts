@@ -25,7 +25,7 @@ companiesCommand
             name: c.name,
             industry: c.industry,
             jobs: (c as Record<string, unknown>)._count ?? "N/A",
-          }))
+          })),
         );
         console.log(`\n${res.total} total companies`);
       }

@@ -31,7 +31,7 @@ jobsCommand
             status: j.status,
             source: j.source,
             created: j.createdAt,
-          }))
+          })),
         );
         console.log(`\n${res.total} total jobs`);
       }

@@ -1,7 +1,9 @@
 import { Command } from "commander";
 import { client } from "../api/client.js";
 
-export const applicationsCommand = new Command("applications").description("Manage job applications");
+export const applicationsCommand = new Command("applications").description(
+  "Manage job applications",
+);
 
 applicationsCommand
   .command("list")
@@ -26,7 +28,7 @@ applicationsCommand
             job: (a.job as Record<string, unknown>)?.title,
             status: a.status,
             updated: a.updatedAt,
-          }))
+          })),
         );
         console.log(`\n${res.total} total applications`);
       }
@@ -85,7 +87,10 @@ applicationsCommand
   .command("interview")
   .description("Schedule an interview")
   .requiredOption("-i, --id <id>", "Application ID")
-  .requiredOption("-t, --type <type>", "Interview type (PHONE/VIDEO/ONSITE/TECHNICAL/CULTURE_FIT/PANEL/FINAL)")
+  .requiredOption(
+    "-t, --type <type>",
+    "Interview type (PHONE/VIDEO/ONSITE/TECHNICAL/CULTURE_FIT/PANEL/FINAL)",
+  )
   .requiredOption("--at <datetime>", "Scheduled datetime (ISO 8601)")
   .option("--duration <minutes>", "Duration in minutes")
   .option("--interviewer <name>", "Interviewer name")

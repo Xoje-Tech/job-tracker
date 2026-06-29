@@ -4,7 +4,7 @@
  * Agents can also import this client for programmatic access.
  */
 
-import { env } from "../../src/config/env.js";
+import { env } from "../../src/shared/config/env.js";
 
 export interface JobTrackerClientOptions {
   baseUrl?: string;
@@ -104,16 +104,16 @@ export class JobTrackerClient {
   }
 
   async updateApplicationStatus(id: string, status: string, note?: string) {
-    return this.request<{ data: Record<string, unknown> }>(
-      `/api/v1/applications/${id}/status`,
-      { method: "PATCH", body: JSON.stringify({ status, note }) }
-    );
+    return this.request<{ data: Record<string, unknown> }>(`/api/v1/applications/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status, note }),
+    });
   }
 
   async scheduleInterview(applicationId: string, data: Record<string, unknown>) {
     return this.request<{ data: Record<string, unknown> }>(
       `/api/v1/applications/${applicationId}/interviews`,
-      { method: "POST", body: JSON.stringify(data) }
+      { method: "POST", body: JSON.stringify(data) },
     );
   }
 
