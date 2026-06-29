@@ -1,9 +1,8 @@
-import type {
-  PrismaClient,
-  ApplicationStatus,
-  ApplicationEventType,
-  InterviewType,
-} from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
+
+export type ApplicationStatus = "DRAFT" | "SUBMITTED" | "SCREENING" | "PHONE_SCREEN" | "TECHNICAL" | "ONSITE" | "OFFER_RECEIVED" | "NEGOTIATION" | "ACCEPTED" | "REJECTED" | "GHOSTED" | "WITHDRAWN";
+export type ApplicationEventType = "STATUS_CHANGE" | "NOTE_ADDED" | "DOCUMENT_ATTACHED" | "INTERVIEW_SCHEDULED" | "REMINDER_SET" | "AI_INTERACTION";
+export type InterviewType = "PHONE" | "VIDEO" | "ONSITE" | "TECHNICAL" | "CULTURE_FIT" | "PANEL" | "FINAL";
 import type { ApplicationRepository } from "../../domain/repositories/application-repository.js";
 import type {
   ApplicationWithRelations,

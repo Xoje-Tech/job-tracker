@@ -1,4 +1,4 @@
-import type { PrismaClient, Prisma } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 import type { CompanyRepository } from "../../domain/repositories/company-repository.js";
 import type {
   Company,
@@ -46,9 +46,9 @@ export class PrismaCompanyRepository implements CompanyRepository {
         name: data.name,
         website: data.website ?? null,
         industry: data.industry ?? null,
-        size: (data.size ?? "UNKNOWN") as Prisma.CompanyCreateInput["size"],
+        size: (data.size ?? "UNKNOWN") as string,
         description: data.description ?? null,
       },
-    });
+    }) as unknown as Promise<Company>;
   }
 }

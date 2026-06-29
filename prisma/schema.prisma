@@ -1,44 +1,48 @@
-// Prisma schema for Job Tracker
+// Prisma schema for Job Tracker — SQLite (local development)
 // AI-powered job search management system
+//
+// This is a SQLite-compatible version of schema.postgres.prisma.
+// Enums are replaced with String fields with @default() matching the
+// first enum value. Validation should happen at the application layer.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 /// Represents a job listing found from any source (manual entry, scraper, API)
 model Job {
-  id          String        @id @default(cuid())
-  title       String
-  company     String
-  location    String?
-  remote      RemoteType    @default(UNKNOWN)
-  salaryMin   Int?
-  salaryMax   Int?
-  salaryCurrency String     @default("EUR")
-  url         String?       @unique
-  description String        @db.Text
-  source      JobSource
-  sourceId    String?       // External ID from the source platform
-  status      JobStatus     @default(SAVED)
-  priority    Priority      @default(MEDIUM)
-  notes       String?       @db.Text
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  appliedAt   DateTime?
-  archivedAt  DateTime?
+  id             String   @id @default(cuid())
+  title          String
+  company        String
+  location       String?
+  remote         String   @default("ONSITE")
+  salaryMin      Int?
+  salaryMax      Int?
+  salaryCurrency String   @default("EUR")
+  url            String?  @unique
+  description    String
+  source         String   @default("MANUAL")
+  sourceId       String? // External ID from the source platform
+  status         String   @default("SAVED")
+  priority       String   @default("MEDIUM")
+  notes          String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  appliedAt      DateTime?
+  archivedAt     DateTime?
 
   // Relations
-  companyRef  Company?      @relation(fields: [companyRefId], references: [id])
-  companyRefId String?
-  applications Application[]
-  tags        JobTag[]
-  documents   Document[]
-  aiChats     AIChat[]
-  reminders   Reminder[]
+  companyRef     Company?      @relation(fields: [companyRefId], references: [id])
+  companyRefId   String?
+  applications   Application[]
+  tags           JobTag[]
+  documents      Document[]
+  aiChats        AIChat[]
+  reminders      Reminder[]
 
   @@index([status])
   @@index([company])
@@ -52,8 +56,8 @@ model Company {
   name        String   @unique
   website     String?
   industry    String?
-  size        CompanySize @default(UNKNOWN)
-  description String?  @db.Text
+  size        String   @default("UNKNOWN")
+  description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -62,17 +66,17 @@ model Company {
 
 /// Job application tracking — the core workflow entity
 model Application {
-  id              String              @id @default(cuid())
+  id              String   @id @default(cuid())
   jobId           String
-  status          ApplicationStatus   @default(DRAFT)
-  coverLetter     String?             @db.Text
+  status          String   @default("DRAFT")
+  coverLetter     String?
   cvVersion       String?
   expectedSalary  Int?
   availabilityDate DateTime?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  job             Job                 @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  job             Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
   events          ApplicationEvent[]
   interviews      Interview[]
 
@@ -82,15 +86,15 @@ model Application {
 
 /// Timeline events for an application (status changes, notes, actions)
 model ApplicationEvent {
-  id            String            @id @default(cuid())
+  id            String   @id @default(cuid())
   applicationId String
-  type          ApplicationEventType
+  type          String   @default("STATUS_CHANGE")
   oldValue      String?
   newValue      String?
-  note          String?           @db.Text
-  createdAt     DateTime          @default(now())
+  note          String?
+  createdAt     DateTime @default(now())
 
-  application   Application       @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
   @@index([createdAt])
@@ -98,20 +102,20 @@ model ApplicationEvent {
 
 /// Interview scheduling and tracking
 model Interview {
-  id            String          @id @default(cuid())
+  id            String   @id @default(cuid())
   applicationId String
-  round         Int             @default(1)
-  type          InterviewType   @default(VIDEO)
+  round         Int      @default(1)
+  type          String   @default("VIDEO")
   scheduledAt   DateTime
-  duration      Int             @default(60) // minutes
+  duration      Int      @default(60) // minutes
   interviewer   String?
-  notes         String?         @db.Text
-  feedback      String?         @db.Text
-  result        InterviewResult @default(PENDING)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  notes         String?
+  feedback      String?
+  result        String   @default("PENDING")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  application   Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   @@index([applicationId])
   @@index([scheduledAt])
@@ -119,16 +123,16 @@ model Interview {
 
 /// Documents associated with jobs/applications (CVs, cover letters, contracts)
 model Document {
-  id        String        @id @default(cuid())
+  id        String   @id @default(cuid())
   jobId     String?
-  type      DocumentType
+  type      String   @default("CV")
   name      String
-  path      String        // Local file path or storage URL
+  path      String   // Local file path or storage URL
   mimeType  String?
-  size      Int?          // bytes
-  createdAt DateTime      @default(now())
+  size      Int?     // bytes
+  createdAt DateTime @default(now())
 
-  job       Job?          @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  job       Job?     @relation(fields: [jobId], references: [id], onDelete: SetNull)
 }
 
 /// Tags for categorizing jobs
@@ -153,8 +157,8 @@ model JobTag {
 model AIChat {
   id        String   @id @default(cuid())
   jobId     String?
-  role      ChatRole
-  content   String   @db.Text
+  role      String   @default("USER")
+  content   String
   metadata  Json?    // Store AI model used, token count, etc.
   createdAt DateTime @default(now())
 
@@ -165,16 +169,16 @@ model AIChat {
 
 /// Reminders for follow-ups, deadlines, etc.
 model Reminder {
-  id        String          @id @default(cuid())
+  id        String   @id @default(cuid())
   jobId     String
-  type      ReminderType
+  type      String   @default("FOLLOW_UP")
   dueDate   DateTime
   message   String
-  done      Boolean         @default(false)
-  createdAt DateTime        @default(now())
+  done      Boolean  @default(false)
+  createdAt DateTime @default(now())
   doneAt    DateTime?
 
-  job       Job             @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
   @@index([dueDate])
   @@index([done])
@@ -190,119 +194,4 @@ model SearchQuery {
   lastRunAt   DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-}
-
-// ==================== Enums ====================
-
-enum RemoteType {
-  ONSITE
-  REMOTE
-  HYBRID
-  UNKNOWN
-}
-
-enum JobSource {
-  MANUAL
-  LINKEDIN
-  INDEED
-  INFOJOBS
-  GLASSDOOR
-  WELCOME_TO_THE_JUNTLE
-  REMOTE_OK
-  SCRAPER
-  API_REFERRAL
-  OTHER
-}
-
-enum JobStatus {
-  SAVED       // Just bookmarked
-  INTERESTING // Marked as interesting
-  APPLIED     // Application submitted
-  INTERVIEW   // In interview process
-  OFFER       // Received offer
-  REJECTED    // Rejected by company
-  WITHDRAWN   // Withdrawn by user
-  EXPIRED     // Job listing expired
-}
-
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
-}
-
-enum CompanySize {
-  UNKNOWN
-  STARTUP    // 1-10
-  SMALL      // 11-50
-  MEDIUM     // 51-200
-  LARGE      // 201-1000
-  ENTERPRISE // 1000+
-}
-
-enum ApplicationStatus {
-  DRAFT
-  SUBMITTED
-  SCREENING
-  PHONE_SCREEN
-  TECHNICAL
-  ONSITE
-  OFFER_RECEIVED
-  NEGOTIATION
-  ACCEPTED
-  REJECTED
-  GHOSTED
-  WITHDRAWN
-}
-
-enum ApplicationEventType {
-  STATUS_CHANGE
-  NOTE_ADDED
-  DOCUMENT_ATTACHED
-  INTERVIEW_SCHEDULED
-  REMINDER_SET
-  AI_INTERACTION
-}
-
-enum InterviewType {
-  PHONE
-  VIDEO
-  ONSITE
-  TECHNICAL
-  CULTURE_FIT
-  PANEL
-  FINAL
-}
-
-enum InterviewResult {
-  PENDING
-  PASSED
-  FAILED
-  CANCELLED
-  RESCHEDULED
-}
-
-enum DocumentType {
-  CV
-  COVER_LETTER
-  PORTFOLIO
-  CONTRACT
-  OFFER
-  CERTIFICATE
-  OTHER
-}
-
-enum ChatRole {
-  USER
-  ASSISTANT
-  SYSTEM
-}
-
-enum ReminderType {
-  FOLLOW_UP
-  DEADLINE
-  INTERVIEW_PREP
-  APPLICATION_STATUS
-  CUSTOM
 }

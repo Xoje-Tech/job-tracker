@@ -1,11 +1,13 @@
-import type { PrismaClient, RemoteType, JobSource } from "@prisma/client";
-import type { JobRepository } from "../../domain/repositories/job-repository.js";
+import type { PrismaClient } from "@prisma/client";
 import type {
   Job,
   JobWithRelations,
   JobListFilters,
   PaginatedResult,
+  RemoteType,
+  JobSource,
 } from "../../domain/entities/job.js";
+import type { JobRepository } from "../../domain/repositories/job-repository.js";
 import type { CreateJobInput, UpdateJobInput } from "../../domain/repositories/job-repository.js";
 
 export class PrismaJobRepository implements JobRepository {
@@ -27,7 +29,7 @@ export class PrismaJobRepository implements JobRepository {
         skip: offset,
         orderBy: { createdAt: "desc" },
         include: { tags: { include: { tag: true } }, companyRef: true },
-      }),
+      }) as unknown as Promise<JobWithRelations[]>,
       this.prisma.job.count({ where }),
     ]);
 
@@ -44,7 +46,7 @@ export class PrismaJobRepository implements JobRepository {
         documents: true,
         reminders: true,
       },
-    });
+    }) as unknown as Promise<JobWithRelations | null>;
   }
 
   async create(data: CreateJobInput): Promise<Job> {
@@ -60,7 +62,7 @@ export class PrismaJobRepository implements JobRepository {
         salaryMin: data.salaryMin ?? null,
         salaryMax: data.salaryMax ?? null,
       },
-    });
+    }) as unknown as Promise<Job>;
   }
 
   async update(id: string, data: UpdateJobInput): Promise<Job> {
@@ -79,7 +81,7 @@ export class PrismaJobRepository implements JobRepository {
         remote: data.remote as RemoteType | undefined,
         source: data.source as JobSource | undefined,
       },
-    });
+    }) as unknown as Promise<Job>;
   }
 
   async delete(id: string): Promise<void> {

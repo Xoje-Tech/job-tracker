@@ -1,4 +1,4 @@
-import type { CompanySize } from "@prisma/client";
+export type CompanySize = "UNKNOWN" | "STARTUP" | "SMALL" | "MEDIUM" | "LARGE" | "ENTERPRISE";
 
 export interface Company {
   id: string;

@@ -6,6 +6,11 @@ export default defineConfig({
     environment: "node",
     include: ["tests/**/*.test.ts"],
     setupFiles: ["./tests/setup.ts"],
+    // SQLite doesn't handle concurrent writes — run all tests in a single fork
+    pool: "forks",
+    poolOptions: {
+      forks: { singleFork: true },
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "lcov"],
