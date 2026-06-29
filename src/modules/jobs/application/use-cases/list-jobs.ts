@@ -1,9 +1,9 @@
-import type { JobRepository } from "../../domain/repositories/job-repository.js";
+import type { JobRepository } from "@/modules/jobs/domain/repositories/job-repository.js";
 import type {
   JobWithRelations,
   JobListFilters,
   PaginatedResult,
-} from "../../domain/entities/job.js";
+} from "@/modules/jobs/domain/entities/job.js";
 
 export class ListJobsUseCase {
   constructor(private readonly jobRepository: JobRepository) {}

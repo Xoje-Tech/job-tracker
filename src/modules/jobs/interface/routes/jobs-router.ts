@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { prisma } from "../../../../shared/lib/prisma.js";
-import { PrismaJobRepository } from "../../infrastructure/persistence/prisma-job-repository.js";
-import { ListJobsUseCase } from "../../application/use-cases/list-jobs.js";
-import { GetJobUseCase } from "../../application/use-cases/get-job.js";
-import { CreateJobUseCase } from "../../application/use-cases/create-job.js";
-import { UpdateJobUseCase } from "../../application/use-cases/update-job.js";
-import { DeleteJobUseCase } from "../../application/use-cases/delete-job.js";
-import { validateCreateJobDto } from "../../application/dto/create-job.dto.js";
-import { parseUpdateJobDto } from "../../application/dto/update-job.dto.js";
+import { prisma } from "@/shared/lib/prisma.js";
+import { PrismaJobRepository } from "@/modules/jobs/infrastructure/persistence/prisma-job-repository.js";
+import { ListJobsUseCase } from "@/modules/jobs/application/use-cases/list-jobs.js";
+import { GetJobUseCase } from "@/modules/jobs/application/use-cases/get-job.js";
+import { CreateJobUseCase } from "@/modules/jobs/application/use-cases/create-job.js";
+import { UpdateJobUseCase } from "@/modules/jobs/application/use-cases/update-job.js";
+import { DeleteJobUseCase } from "@/modules/jobs/application/use-cases/delete-job.js";
+import { validateCreateJobDto } from "@/modules/jobs/application/dto/create-job.dto.js";
+import { parseUpdateJobDto } from "@/modules/jobs/application/dto/update-job.dto.js";
 
 const jobRepository = new PrismaJobRepository(prisma);
 const listJobsUseCase = new ListJobsUseCase(jobRepository);

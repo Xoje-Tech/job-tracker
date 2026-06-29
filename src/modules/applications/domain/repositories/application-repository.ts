@@ -3,7 +3,7 @@ import type {
   ApplicationListFilters,
   PaginatedResult,
   Interview,
-} from "../entities/application.js";
+} from "@/modules/applications/domain/entities/application.js";
 
 export interface ApplicationRepository {
   findAll(filters: ApplicationListFilters): Promise<PaginatedResult<ApplicationWithRelations>>;

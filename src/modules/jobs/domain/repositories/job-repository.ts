@@ -1,4 +1,4 @@
-import type { Job, JobWithRelations, JobListFilters, PaginatedResult } from "../entities/job.js";
+import type { Job, JobWithRelations, JobListFilters, PaginatedResult } from "@/modules/jobs/domain/entities/job.js";
 
 export interface JobRepository {
   findAll(filters: JobListFilters): Promise<PaginatedResult<JobWithRelations>>;

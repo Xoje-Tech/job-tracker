@@ -1,6 +1,6 @@
-import type { ApplicationRepository } from "../../domain/repositories/application-repository.js";
-import type { Interview } from "../../domain/entities/application.js";
-import { AppError } from "../../../../shared/middleware/error.js";
+import type { ApplicationRepository } from "@/modules/applications/domain/repositories/application-repository.js";
+import type { Interview } from "@/modules/applications/domain/entities/application.js";
+import { AppError } from "@/shared/middleware/error.js";
 
 export interface ScheduleInterviewCommand {
   type: string;

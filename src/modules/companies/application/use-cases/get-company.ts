@@ -1,6 +1,6 @@
-import type { CompanyRepository } from "../../domain/repositories/company-repository.js";
-import type { CompanyWithJobs } from "../../domain/entities/company.js";
-import { AppError } from "../../../../shared/middleware/error.js";
+import type { CompanyRepository } from "@/modules/companies/domain/repositories/company-repository.js";
+import type { CompanyWithJobs } from "@/modules/companies/domain/entities/company.js";
+import { AppError } from "@/shared/middleware/error.js";
 
 export class GetCompanyUseCase {
   constructor(private readonly repository: CompanyRepository) {}

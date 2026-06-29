@@ -1,12 +1,12 @@
 import type { PrismaClient } from "@prisma/client";
-import type { CompanyRepository } from "../../domain/repositories/company-repository.js";
+import type { CompanyRepository } from "@/modules/companies/domain/repositories/company-repository.js";
 import type {
   Company,
   CompanyWithJobs,
   CompanyListFilters,
   PaginatedResult,
-} from "../../domain/entities/company.js";
-import type { CreateCompanyInput } from "../../domain/repositories/company-repository.js";
+} from "@/modules/companies/domain/entities/company.js";
+import type { CreateCompanyInput } from "@/modules/companies/domain/repositories/company-repository.js";
 
 export class PrismaCompanyRepository implements CompanyRepository {
   constructor(private readonly prisma: PrismaClient) {}

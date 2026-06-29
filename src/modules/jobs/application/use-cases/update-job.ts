@@ -1,7 +1,7 @@
-import type { JobRepository } from "../../domain/repositories/job-repository.js";
-import type { UpdateJobDto } from "../dto/update-job.dto.js";
-import type { Job } from "../../domain/entities/job.js";
-import { AppError } from "../../../../shared/middleware/error.js";
+import type { JobRepository } from "@/modules/jobs/domain/repositories/job-repository.js";
+import type { UpdateJobDto } from "@/modules/jobs/application/dto/update-job.dto.js";
+import type { Job } from "@/modules/jobs/domain/entities/job.js";
+import { AppError } from "@/shared/middleware/error.js";
 
 export class UpdateJobUseCase {
   constructor(private readonly jobRepository: JobRepository) {}

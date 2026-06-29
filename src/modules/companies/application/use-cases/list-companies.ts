@@ -1,9 +1,9 @@
-import type { CompanyRepository } from "../../domain/repositories/company-repository.js";
+import type { CompanyRepository } from "@/modules/companies/domain/repositories/company-repository.js";
 import type {
   CompanyWithJobs,
   CompanyListFilters,
   PaginatedResult,
-} from "../../domain/entities/company.js";
+} from "@/modules/companies/domain/entities/company.js";
 
 export class ListCompaniesUseCase {
   constructor(private readonly repository: CompanyRepository) {}

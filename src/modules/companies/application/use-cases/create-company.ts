@@ -1,6 +1,6 @@
-import type { CompanyRepository } from "../../domain/repositories/company-repository.js";
-import type { CreateCompanyInput } from "../../domain/repositories/company-repository.js";
-import type { Company } from "../../domain/entities/company.js";
+import type { CompanyRepository } from "@/modules/companies/domain/repositories/company-repository.js";
+import type { CreateCompanyInput } from "@/modules/companies/domain/repositories/company-repository.js";
+import type { Company } from "@/modules/companies/domain/entities/company.js";
 
 export class CreateCompanyUseCase {
   constructor(private readonly repository: CompanyRepository) {}

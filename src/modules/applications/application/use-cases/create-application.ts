@@ -1,6 +1,6 @@
-import type { ApplicationRepository } from "../../domain/repositories/application-repository.js";
-import type { ApplicationWithRelations } from "../../domain/entities/application.js";
-import { AppError } from "../../../../shared/middleware/error.js";
+import type { ApplicationRepository } from "@/modules/applications/domain/repositories/application-repository.js";
+import type { ApplicationWithRelations } from "@/modules/applications/domain/entities/application.js";
+import { AppError } from "@/shared/middleware/error.js";
 
 export interface CreateApplicationCommand {
   jobId: string;

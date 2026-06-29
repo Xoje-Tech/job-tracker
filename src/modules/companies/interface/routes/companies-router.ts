@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { prisma } from "../../../../shared/lib/prisma.js";
-import { AppError } from "../../../../shared/middleware/error.js";
-import { PrismaCompanyRepository } from "../../infrastructure/persistence/prisma-company-repository.js";
-import { ListCompaniesUseCase } from "../../application/use-cases/list-companies.js";
-import { GetCompanyUseCase } from "../../application/use-cases/get-company.js";
-import { CreateCompanyUseCase } from "../../application/use-cases/create-company.js";
+import { prisma } from "@/shared/lib/prisma.js";
+import { AppError } from "@/shared/middleware/error.js";
+import { PrismaCompanyRepository } from "@/modules/companies/infrastructure/persistence/prisma-company-repository.js";
+import { ListCompaniesUseCase } from "@/modules/companies/application/use-cases/list-companies.js";
+import { GetCompanyUseCase } from "@/modules/companies/application/use-cases/get-company.js";
+import { CreateCompanyUseCase } from "@/modules/companies/application/use-cases/create-company.js";
 
 const repository = new PrismaCompanyRepository(prisma);
 const listCompaniesUseCase = new ListCompaniesUseCase(repository);

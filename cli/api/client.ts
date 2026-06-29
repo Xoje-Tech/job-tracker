@@ -4,7 +4,7 @@
  * Agents can also import this client for programmatic access.
  */
 
-import { env } from "../../src/shared/config/env.js";
+import { env } from "@/shared/config/env.js";
 
 export interface JobTrackerClientOptions {
   baseUrl?: string;

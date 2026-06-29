@@ -1,4 +1,4 @@
-import { AppError } from "../../../../shared/middleware/error.js";
+import { AppError } from "@/shared/middleware/error.js";
 
 export interface CreateJobDto {
   title: string;

@@ -3,7 +3,7 @@ import type {
   CompanyWithJobs,
   CompanyListFilters,
   PaginatedResult,
-} from "../entities/company.js";
+} from "@/modules/companies/domain/entities/company.js";
 
 export interface CompanyRepository {
   findAll(filters: CompanyListFilters): Promise<PaginatedResult<CompanyWithJobs>>;

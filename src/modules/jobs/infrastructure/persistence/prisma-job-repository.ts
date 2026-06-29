@@ -6,9 +6,9 @@ import type {
   PaginatedResult,
   RemoteType,
   JobSource,
-} from "../../domain/entities/job.js";
-import type { JobRepository } from "../../domain/repositories/job-repository.js";
-import type { CreateJobInput, UpdateJobInput } from "../../domain/repositories/job-repository.js";
+} from "@/modules/jobs/domain/entities/job.js";
+import type { JobRepository } from "@/modules/jobs/domain/repositories/job-repository.js";
+import type { CreateJobInput, UpdateJobInput } from "@/modules/jobs/domain/repositories/job-repository.js";
 
 export class PrismaJobRepository implements JobRepository {
   constructor(private readonly prisma: PrismaClient) {}

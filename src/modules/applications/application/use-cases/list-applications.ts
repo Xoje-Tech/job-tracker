@@ -1,9 +1,9 @@
-import type { ApplicationRepository } from "../../domain/repositories/application-repository.js";
+import type { ApplicationRepository } from "@/modules/applications/domain/repositories/application-repository.js";
 import type {
   ApplicationWithRelations,
   ApplicationListFilters,
   PaginatedResult,
-} from "../../domain/entities/application.js";
+} from "@/modules/applications/domain/entities/application.js";
 
 export class ListApplicationsUseCase {
   constructor(private readonly repository: ApplicationRepository) {}
