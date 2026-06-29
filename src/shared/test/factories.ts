@@ -1,5 +1,5 @@
 // Test factories — create test data with realistic defaults
-import { prisma } from "../src/shared/lib/prisma.js";
+import { prisma } from "@/shared/lib/prisma.js";
 
 export async function createTestCompany(overrides: Record<string, unknown> = {}) {
   return prisma.company.create({

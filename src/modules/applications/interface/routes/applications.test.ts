@@ -1,8 +1,8 @@
 import { describe, it, expect, afterAll, afterEach } from "vitest";
 import request from "supertest";
-import { app } from "../../src/server.js";
-import { prisma } from "../../src/shared/lib/prisma.js";
-import { cleanupTestData, createTestJob } from "../factories.js";
+import { app } from "@/server.js";
+import { prisma } from "@/shared/lib/prisma.js";
+import { cleanupTestData, createTestJob } from "@/shared/test/factories.js";
 
 let dbAvailable = true;
 try {
