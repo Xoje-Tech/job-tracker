@@ -1,6 +1,7 @@
 import { app } from "@/server.js";
 import { env } from "@/shared/config/env.js";
 import { prisma } from "@/shared/lib/prisma.js";
+import { getLocalIPv4Addresses } from "./scripts/network-info.js";
 
 async function bootstrap(): Promise<void> {
   try {
@@ -8,10 +9,13 @@ async function bootstrap(): Promise<void> {
     console.log("✅ Database connected");
 
     app.listen(env.PORT, "0.0.0.0", () => {
-      console.log(`🚀 Job Tracker API running on http://0.0.0.0:${env.PORT}`);
-      console.log(`🌐 Red local:    http://192.168.18.4:${env.PORT}`);
-      console.log(`📋 Swagger docs: http://192.168.18.4:${env.PORT}/api/docs`);
-      console.log(`❤️  Health check: http://192.168.18.4:${env.PORT}/api/health`);
+      const localIPs = getLocalIPv4Addresses();
+      console.log(`🚀 Job Tracker API running on http://localhost:${env.PORT}`);
+      for (const ip of localIPs) {
+        console.log(`🌐 Red local:    http://${ip}:${env.PORT}`);
+      }
+      console.log(`📋 Swagger docs: http://localhost:${env.PORT}/api/docs`);
+      console.log(`❤️  Health check: http://localhost:${env.PORT}/api/health`);
     });
   } catch (error) {
     console.error("❌ Failed to start server:", error);
