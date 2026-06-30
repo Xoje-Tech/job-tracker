@@ -8,6 +8,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@jobs": path.resolve(__dirname, "./src/modules/jobs"),
+      "@applications": path.resolve(__dirname, "./src/modules/applications"),
+      "@companies": path.resolve(__dirname, "./src/modules/companies"),
+      "@cli": path.resolve(__dirname, "./cli"),
+      "@cliApi": path.resolve(__dirname, "./cli/api"),
     },
   },
   test: {

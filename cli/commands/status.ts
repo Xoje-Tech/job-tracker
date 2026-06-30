@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { client } from "../api/client.js";
+import { client } from "@cliApi/client.js";
 
 export const statusCommand = new Command("status").description("Show system status");
 

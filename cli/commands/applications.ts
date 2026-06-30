@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { client } from "../api/client.js";
+import { client } from "@cliApi/client.js";
 
 export const applicationsCommand = new Command("applications").description(
   "Manage job applications",

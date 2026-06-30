@@ -20,7 +20,12 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@jobs/*": ["src/modules/jobs/*"],
+      "@applications/*": ["src/modules/applications/*"],
+      "@companies/*": ["src/modules/companies/*"],
+      "@cli/*": ["cli/*"],
+      "@cliApi/*": ["cli/api/*"]
     }
   },
   "include": ["src/**/*", "cli/**/*"],

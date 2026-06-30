@@ -1,7 +1,13 @@
 node_modules/
 dist/
-coverage/
 .env
+.env.test
 .env.local
-*.log
+.env.*.local
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+coverage/
+.tsbuildinfo
 .DS_Store
