@@ -38,18 +38,13 @@ describe("jobs subcommand CLI tests", () => {
       expect(mockExit).toHaveBeenCalledWith(1);
     });
 
-    it("should spawn scraper with exact flags and display table", async () => {
-      mockSpawnSync.mockReturnValue({
-        status: 0,
-        stdout: JSON.stringify({
-          meta: { count: 2, page: 1 },
-          results: [
-            { id: "1", title: "Job A", company: "Company A", location: "Berlin", url: "url-a" },
-            { id: "2", title: "Job B", company: "Company B", location: "Berlin", url: "url-b" },
-          ],
-        }),
-        stderr: "",
-      } as any);
+    it("should call client.searchExternalJobs and display table", async () => {
+      const spySearch = vi.spyOn(client, "searchExternalJobs").mockResolvedValue({
+        data: [
+          { sourceId: "1", source: "LINKEDIN", title: "Job A", company: "Company A", location: "Berlin", url: "url-a" },
+          { sourceId: "2", source: "MERCADONA", title: "Job B", company: "Company B", location: "Berlin", url: "url-b" },
+        ],
+      });
 
       await jobsCommand.parseAsync([
         "node",
@@ -61,31 +56,23 @@ describe("jobs subcommand CLI tests", () => {
         "Frontend",
         "--limit",
         "2",
+        "--sources",
+        "LINKEDIN,MERCADONA",
       ]);
 
-      expect(mockSpawnSync).toHaveBeenCalledWith(
-        "bun",
-        [
-          "run",
-          ".agents/skills/linkedin-search/cli/src/cli.ts",
-          "search",
-          "--query",
-          "Frontend",
-          "--location",
-          "Berlin",
-          "--limit",
-          "2",
-          "--format",
-          "json",
-        ],
-        { encoding: "utf8" },
-      );
+      expect(spySearch).toHaveBeenCalledWith({
+        query: "Frontend",
+        location: "Berlin",
+        limit: 2,
+        sources: ["LINKEDIN", "MERCADONA"],
+      });
 
       expect(mockConsoleTable).toHaveBeenCalledWith([
-        { id: "1", title: "Job A", company: "Company A", location: "Berlin", url: "url-a" },
-        { id: "2", title: "Job B", company: "Company B", location: "Berlin", url: "url-b" },
+        { id: "1", source: "LINKEDIN", title: "Job A", company: "Company A", location: "Berlin", url: "url-a" },
+        { id: "2", source: "MERCADONA", title: "Job B", company: "Company B", location: "Berlin", url: "url-b" },
       ]);
       expect(mockExit).not.toHaveBeenCalled();
+      spySearch.mockRestore();
     });
   });
 
@@ -100,29 +87,26 @@ describe("jobs subcommand CLI tests", () => {
     });
 
     it("should fetch, deduplicate and import listings correctly", async () => {
-      mockSpawnSync.mockReturnValue({
-        status: 0,
-        stdout: JSON.stringify({
-          meta: { count: 2, page: 1 },
-          results: [
-            {
-              id: "101",
-              title: "Job 101",
-              company: "Company A",
-              location: "Paris",
-              url: "url-101",
-            },
-            {
-              id: "102",
-              title: "Job 102",
-              company: "Company B",
-              location: "Paris",
-              url: "url-102",
-            },
-          ],
-        }),
-        stderr: "",
-      } as any);
+      const spySearch = vi.spyOn(client, "searchExternalJobs").mockResolvedValue({
+        data: [
+          {
+            sourceId: "101",
+            source: "LINKEDIN",
+            title: "Job 101",
+            company: "Company A",
+            location: "Paris",
+            url: "url-101",
+          },
+          {
+            sourceId: "102",
+            source: "MERCADONA",
+            title: "Job 102",
+            company: "Company B",
+            location: "Paris",
+            url: "url-102",
+          },
+        ],
+      });
 
       // Mock client.listJobs and client.createJob
       // For ID 101, pretend it exists (data has length 1)
@@ -150,27 +134,16 @@ describe("jobs subcommand CLI tests", () => {
         "2",
       ]);
 
-      expect(mockSpawnSync).toHaveBeenCalledWith(
-        "bun",
-        [
-          "run",
-          ".agents/skills/linkedin-search/cli/src/cli.ts",
-          "search",
-          "--query",
-          "React",
-          "--location",
-          "Paris",
-          "--limit",
-          "2",
-          "--format",
-          "json",
-        ],
-        { encoding: "utf8" },
-      );
+      expect(spySearch).toHaveBeenCalledWith({
+        query: "React",
+        location: "Paris",
+        limit: 2,
+        sources: undefined,
+      });
 
       // Verify listJobs was called for both
       expect(spyList).toHaveBeenCalledWith({ source: "LINKEDIN", sourceId: "101" });
-      expect(spyList).toHaveBeenCalledWith({ source: "LINKEDIN", sourceId: "102" });
+      expect(spyList).toHaveBeenCalledWith({ source: "MERCADONA", sourceId: "102" });
 
       // Verify createJob was called only for "102"
       expect(spyCreate).toHaveBeenCalledTimes(1);
@@ -179,15 +152,16 @@ describe("jobs subcommand CLI tests", () => {
         company: "Company B",
         location: "Paris",
         url: "url-102",
-        source: "LINKEDIN",
+        source: "MERCADONA",
         sourceId: "102",
-        description: "Imported from LinkedIn - URL: url-102",
+        description: "Imported from MERCADONA - URL: url-102",
       });
 
       // Verify summary stats
       expect(mockConsoleLog).toHaveBeenCalledWith("Found 2 jobs. Imported: 1, Skipped: 1");
       expect(mockExit).not.toHaveBeenCalled();
 
+      spySearch.mockRestore();
       spyList.mockRestore();
       spyCreate.mockRestore();
     });

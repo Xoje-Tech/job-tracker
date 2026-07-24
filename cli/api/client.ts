@@ -76,6 +76,23 @@ export class JobTrackerClient {
     return this.request<{ data: Record<string, unknown> }>(`/api/v1/jobs/${id}`);
   }
 
+  // Search External Portals (aggregate & parallel)
+  async searchExternalJobs(params: {
+    query?: string;
+    location: string;
+    limit?: number;
+    sources?: string[];
+  }) {
+    const qs = new URLSearchParams();
+    if (params.query) qs.set("query", params.query);
+    qs.set("location", params.location);
+    if (params.limit) qs.set("limit", String(params.limit));
+    if (params.sources && params.sources.length > 0) {
+      qs.set("sources", params.sources.join(","));
+    }
+    return this.request<{ data: Record<string, any>[] }>(`/api/v1/jobs/search?${qs.toString()}`);
+  }
+
   async createJob(data: Record<string, unknown>) {
     return this.request<{ data: Record<string, unknown> }>("/api/v1/jobs", {
       method: "POST",

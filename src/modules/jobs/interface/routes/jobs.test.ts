@@ -1,7 +1,8 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import request from "supertest";
 import { app } from "@/server.js";
 import { prisma } from "@/shared/lib/prisma.js";
+import { SearchExternalJobsUseCase } from "@/modules/jobs/application/use-cases/search-external-jobs.js";
 
 // Skip DB tests if no database is available
 let dbAvailable = true;
@@ -98,5 +99,37 @@ describe("Jobs API", () => {
       // Cleanup
       await prisma.job.delete({ where: { id: job1Id } }).catch(() => {});
     }
+  });
+
+  describe("GET /api/v1/jobs/search", () => {
+    it("should return 400 Bad Request if location is missing", async () => {
+      const res = await request(app).get("/api/v1/jobs/search");
+      expect(res.status).toBe(400);
+      expect(res.body.error).toContain("location is required");
+    });
+
+    it("should return 200 OK with aggregated external jobs on success", async () => {
+      const mockResult = [
+        { sourceId: "mock-1", source: "LINKEDIN", title: "Mock Dev", company: "Mock Co" }
+      ];
+      const spy = vi
+        .spyOn(SearchExternalJobsUseCase.prototype, "execute")
+        .mockResolvedValue(mockResult);
+
+      const res = await request(app)
+        .get("/api/v1/jobs/search")
+        .query({ location: "Madrid", query: "Node" });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toEqual(mockResult);
+      expect(spy).toHaveBeenCalledWith({
+        query: "Node",
+        location: "Madrid",
+        limit: undefined,
+        sources: undefined,
+      });
+
+      spy.mockRestore();
+    });
   });
 });
