@@ -17,7 +17,7 @@ ok()    { printf "${GREEN}[OK]${NC}    %s\n" "$1"; }
 warn()  { printf "${YELLOW}[WARN]${NC}  %s\n" "$1"; }
 fail()  { printf "${RED}[FAIL]${NC}  %s\n" "$1"; }
 
-PROJECT_DIR="/home/hermes/projects/job-tracker"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SHIM_DIR="/home/hermes/.local/bin"
 SHIM_PATH="${SHIM_DIR}/job-tracker"
 
