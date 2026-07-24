@@ -17,6 +17,7 @@ describe("Jobs API", () => {
   afterEach(async () => {
     if (testJobId && dbAvailable) {
       await prisma.job.delete({ where: { id: testJobId } }).catch(() => {});
+      testJobId = "";
     }
   });
 
@@ -37,16 +38,14 @@ describe("Jobs API", () => {
       console.log("  ⚠️  Skipping: no database");
       return;
     }
-    const res = await request(app)
-      .post("/api/v1/jobs")
-      .send({
-        title: "Senior Backend Developer",
-        company: "Test Corp",
-        location: "Barcelona",
-        remote: "REMOTE",
-        description: "Node.js and TypeScript role",
-        source: "MANUAL",
-      });
+    const res = await request(app).post("/api/v1/jobs").send({
+      title: "Senior Backend Developer",
+      company: "Test Corp",
+      location: "Barcelona",
+      remote: "REMOTE",
+      description: "Node.js and TypeScript role",
+      source: "MANUAL",
+    });
 
     expect(res.status).toBe(201);
     expect(res.body.data).toHaveProperty("id");
@@ -68,5 +67,36 @@ describe("Jobs API", () => {
     }
     const res = await request(app).get("/api/v1/jobs/nonexistent-id-12345");
     expect(res.status).toBe(404);
+  });
+
+  it("GET /api/v1/jobs filters results by query parameters source and sourceId", async () => {
+    if (!dbAvailable) {
+      console.log("  ⚠️  Skipping: no database");
+      return;
+    }
+
+    // Create a job with unique sourceId
+    const res1 = await request(app).post("/api/v1/jobs").send({
+      title: "Unique Developer",
+      company: "Filter Corp",
+      source: "LINKEDIN",
+      sourceId: "filter-unique-123",
+    });
+    expect(res1.status).toBe(201);
+    const job1Id = res1.body.data.id;
+
+    try {
+      // Query filter by sourceId
+      const resFilter = await request(app)
+        .get("/api/v1/jobs")
+        .query({ source: "LINKEDIN", sourceId: "filter-unique-123" });
+
+      expect(resFilter.status).toBe(200);
+      expect(resFilter.body.data).toHaveLength(1);
+      expect(resFilter.body.data[0].id).toBe(job1Id);
+    } finally {
+      // Cleanup
+      await prisma.job.delete({ where: { id: job1Id } }).catch(() => {});
+    }
   });
 });

@@ -8,6 +8,7 @@ export interface CreateJobDto {
   url?: string | null;
   description?: string;
   source?: string;
+  sourceId?: string | null;
   salaryMin?: number | null;
   salaryMax?: number | null;
 }
@@ -23,6 +24,12 @@ export function validateCreateJobDto(body: unknown): CreateJobDto {
   if (typeof obj.company !== "string" || !obj.company) {
     throw new AppError(400, "title and company are required");
   }
+  if (obj.source !== undefined && typeof obj.source !== "string") {
+    throw new AppError(400, "source must be a string");
+  }
+  if (obj.sourceId !== undefined && obj.sourceId !== null && typeof obj.sourceId !== "string") {
+    throw new AppError(400, "sourceId must be a string or null");
+  }
   return {
     title: obj.title,
     company: obj.company,
@@ -31,6 +38,7 @@ export function validateCreateJobDto(body: unknown): CreateJobDto {
     url: obj.url as string | null | undefined,
     description: obj.description as string | undefined,
     source: obj.source as string | undefined,
+    sourceId: obj.sourceId as string | null | undefined,
     salaryMin: obj.salaryMin as number | null | undefined,
     salaryMax: obj.salaryMax as number | null | undefined,
   };

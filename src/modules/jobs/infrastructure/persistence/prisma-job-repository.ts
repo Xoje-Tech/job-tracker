@@ -8,18 +8,22 @@ import type {
   JobSource,
 } from "@/modules/jobs/domain/entities/job.js";
 import type { JobRepository } from "@/modules/jobs/domain/repositories/job-repository.js";
-import type { CreateJobInput, UpdateJobInput } from "@/modules/jobs/domain/repositories/job-repository.js";
+import type {
+  CreateJobInput,
+  UpdateJobInput,
+} from "@/modules/jobs/domain/repositories/job-repository.js";
 
 export class PrismaJobRepository implements JobRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findAll(filters: JobListFilters): Promise<PaginatedResult<JobWithRelations>> {
-    const { status, company, source, limit, offset } = filters;
+    const { status, company, source, sourceId, limit, offset } = filters;
 
     const where = {
       status: status ?? undefined,
       company: company ? { contains: company, mode: "insensitive" as const } : undefined,
       source: source ?? undefined,
+      sourceId: sourceId ?? undefined,
     };
 
     const [jobs, total] = await Promise.all([
@@ -59,6 +63,7 @@ export class PrismaJobRepository implements JobRepository {
         url: data.url ?? null,
         description: data.description ?? "",
         source: (data.source as JobSource) ?? "MANUAL",
+        sourceId: data.sourceId ?? null,
         salaryMin: data.salaryMin ?? null,
         salaryMax: data.salaryMax ?? null,
       },
@@ -80,6 +85,7 @@ export class PrismaJobRepository implements JobRepository {
         location: data.location,
         remote: data.remote as RemoteType | undefined,
         source: data.source as JobSource | undefined,
+        sourceId: data.sourceId,
       },
     }) as unknown as Promise<Job>;
   }

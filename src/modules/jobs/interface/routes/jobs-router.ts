@@ -20,12 +20,13 @@ export const jobsRouter = Router();
 
 // GET /api/v1/jobs — List all jobs with optional filters
 jobsRouter.get("/", async (req, res) => {
-  const { status, company, source, limit = "50", offset = "0" } = req.query;
+  const { status, company, source, sourceId, limit = "50", offset = "0" } = req.query;
 
   const result = await listJobsUseCase.execute({
     status: status as never,
     company: company as string | undefined,
     source: source as never,
+    sourceId: sourceId as string | undefined,
     limit: Number(limit),
     offset: Number(offset),
   });

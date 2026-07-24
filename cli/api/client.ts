@@ -53,10 +53,19 @@ export class JobTrackerClient {
   }
 
   // Jobs
-  async listJobs(params?: { status?: string; company?: string; limit?: number; offset?: number }) {
+  async listJobs(params?: {
+    status?: string;
+    company?: string;
+    source?: string;
+    sourceId?: string;
+    limit?: number;
+    offset?: number;
+  }) {
     const qs = new URLSearchParams();
     if (params?.status) qs.set("status", params.status);
     if (params?.company) qs.set("company", params.company);
+    if (params?.source) qs.set("source", params.source);
+    if (params?.sourceId) qs.set("sourceId", params.sourceId);
     if (params?.limit) qs.set("limit", String(params.limit));
     if (params?.offset) qs.set("offset", String(params.offset));
     const query = qs.toString() ? `?${qs.toString()}` : "";
