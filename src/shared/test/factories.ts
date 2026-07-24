@@ -30,7 +30,7 @@ export async function createTestJob(overrides: Record<string, unknown> = {}) {
 
 export async function createTestApplication(
   jobId: string,
-  overrides: Record<string, unknown> = {}
+  overrides: Record<string, unknown> = {},
 ) {
   return prisma.application.create({
     data: {
