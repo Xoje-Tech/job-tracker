@@ -36,9 +36,7 @@ describe("Applications API", () => {
     if (!dbAvailable) return;
     const job = await createTestJob();
 
-    const res = await request(app)
-      .post("/api/v1/applications")
-      .send({ jobId: job.id });
+    const res = await request(app).post("/api/v1/applications").send({ jobId: job.id });
 
     expect(res.status).toBe(201);
     expect(res.body.data).toHaveProperty("id");
@@ -73,13 +71,11 @@ describe("Applications API", () => {
       data: { jobId: job.id, status: "TECHNICAL" },
     });
 
-    const res = await request(app)
-      .post(`/api/v1/applications/${app_record.id}/interviews`)
-      .send({
-        type: "TECHNICAL",
-        scheduledAt: "2026-07-15T10:00:00Z",
-        duration: 60,
-      });
+    const res = await request(app).post(`/api/v1/applications/${app_record.id}/interviews`).send({
+      type: "TECHNICAL",
+      scheduledAt: "2026-07-15T10:00:00Z",
+      duration: 60,
+    });
 
     expect(res.status).toBe(201);
     expect(res.body.data).toHaveProperty("id");

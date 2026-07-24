@@ -1,6 +1,24 @@
-export type JobStatus = "SAVED" | "INTERESTING" | "APPLIED" | "INTERVIEW" | "OFFER" | "REJECTED" | "WITHDRAWN" | "EXPIRED";
+export type JobStatus =
+  | "SAVED"
+  | "INTERESTING"
+  | "APPLIED"
+  | "INTERVIEW"
+  | "OFFER"
+  | "REJECTED"
+  | "WITHDRAWN"
+  | "EXPIRED";
 export type RemoteType = "ONSITE" | "REMOTE" | "HYBRID" | "UNKNOWN";
-export type JobSource = "MANUAL" | "LINKEDIN" | "INDEED" | "INFOJOBS" | "GLASSDOOR" | "WELCOME_TO_THE_JUNTLE" | "REMOTE_OK" | "SCRAPER" | "API_REFERRAL" | "OTHER";
+export type JobSource =
+  | "MANUAL"
+  | "LINKEDIN"
+  | "INDEED"
+  | "INFOJOBS"
+  | "GLASSDOOR"
+  | "WELCOME_TO_THE_JUNTLE"
+  | "REMOTE_OK"
+  | "SCRAPER"
+  | "API_REFERRAL"
+  | "OTHER";
 export type Priority = "LOW" | "MEDIUM" | "HIGH" | "URGENT";
 
 export interface Job {
@@ -14,6 +32,7 @@ export interface Job {
   url: string | null;
   description: string;
   source: JobSource;
+  sourceId: string | null;
   status: JobStatus;
   priority: Priority;
   appliedAt: Date | null;
@@ -34,6 +53,7 @@ export interface JobListFilters {
   status?: JobStatus;
   company?: string;
   source?: JobSource;
+  sourceId?: string;
   limit: number;
   offset: number;
 }
