@@ -18,7 +18,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "cli/**/*.test.ts"],
     setupFiles: ["./tests/setup.ts"],
     // SQLite doesn't handle concurrent writes — run all tests in a single fork
     pool: "forks",

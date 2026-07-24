@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { client } from "@cliApi/client.js";
+import child_process from "node:child_process";
 
 export const jobsCommand = new Command("jobs").description("Manage job listings");
 
@@ -145,6 +146,126 @@ jobsCommand
       } else {
         console.log("🗑️ Job deleted:", opts.id);
       }
+    } catch (err) {
+      console.error("❌ Error:", (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+interface ScrapedJobCard {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  url: string;
+}
+
+jobsCommand
+  .command("search")
+  .description("Search jobs on LinkedIn")
+  .option("-q, --query <query>", "Search query")
+  .option("-l, --location <location>", "Location to search")
+  .option("-n, --limit <limit>", "Limit results")
+  .action(async (opts) => {
+    if (!opts.location) {
+      console.error("❌ Error: --location is required");
+      process.exit(1);
+    }
+    try {
+      const args = ["run", ".agents/skills/linkedin-search/cli/src/cli.ts", "search"];
+      if (opts.query) {
+        args.push("--query", opts.query);
+      }
+      args.push("--location", opts.location);
+      if (opts.limit) {
+        args.push("--limit", opts.limit);
+      }
+      args.push("--format", "json");
+
+      const res = child_process.spawnSync("bun", args, { encoding: "utf8" });
+      if (res.error) {
+        throw new Error(`Failed to run scraper: ${res.error.message}`);
+      }
+      if (res.status !== 0) {
+        throw new Error(`Scraper exited with code ${res.status}: ${res.stderr}`);
+      }
+
+      const data = JSON.parse(res.stdout);
+      const results = (data.results || []) as ScrapedJobCard[];
+      if (results.length === 0) {
+        console.log("No jobs found.");
+      } else {
+        console.table(
+          results.map((r) => ({
+            id: r.id,
+            title: r.title,
+            company: r.company,
+            location: r.location,
+            url: r.url,
+          })),
+        );
+      }
+    } catch (err) {
+      console.error("❌ Error:", (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+jobsCommand
+  .command("import")
+  .description("Import jobs from LinkedIn into database")
+  .option("-q, --query <query>", "Search query")
+  .option("-l, --location <location>", "Location to search")
+  .option("-n, --limit <limit>", "Limit results")
+  .action(async (opts) => {
+    if (!opts.location) {
+      console.error("❌ Error: --location is required");
+      process.exit(1);
+    }
+    try {
+      const args = ["run", ".agents/skills/linkedin-search/cli/src/cli.ts", "search"];
+      if (opts.query) {
+        args.push("--query", opts.query);
+      }
+      args.push("--location", opts.location);
+      if (opts.limit) {
+        args.push("--limit", opts.limit);
+      }
+      args.push("--format", "json");
+
+      const res = child_process.spawnSync("bun", args, { encoding: "utf8" });
+      if (res.error) {
+        throw new Error(`Failed to run scraper: ${res.error.message}`);
+      }
+      if (res.status !== 0) {
+        throw new Error(`Scraper exited with code ${res.status}: ${res.stderr}`);
+      }
+
+      const data = JSON.parse(res.stdout);
+      const results = (data.results || []) as ScrapedJobCard[];
+      const total = results.length;
+      let imported = 0;
+      let skipped = 0;
+
+      for (const card of results) {
+        const check = await client.listJobs({ source: "LINKEDIN", sourceId: card.id });
+        if (check.data && check.data.length > 0) {
+          skipped++;
+        } else {
+          await client.createJob({
+            title: card.title,
+            company: card.company,
+            location: card.location,
+            url: card.url,
+            source: "LINKEDIN",
+            sourceId: card.id,
+            description: "Imported from LinkedIn - URL: " + card.url,
+          });
+          imported++;
+        }
+      }
+
+      console.log(`Found ${total} jobs. Imported: ${imported}, Skipped: ${skipped}`);
     } catch (err) {
       console.error("❌ Error:", (err as Error).message);
       process.exit(1);

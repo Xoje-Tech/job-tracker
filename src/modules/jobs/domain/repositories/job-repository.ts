@@ -1,4 +1,9 @@
-import type { Job, JobWithRelations, JobListFilters, PaginatedResult } from "@/modules/jobs/domain/entities/job.js";
+import type {
+  Job,
+  JobWithRelations,
+  JobListFilters,
+  PaginatedResult,
+} from "@/modules/jobs/domain/entities/job.js";
 
 export interface JobRepository {
   findAll(filters: JobListFilters): Promise<PaginatedResult<JobWithRelations>>;
@@ -17,6 +22,7 @@ export interface CreateJobInput {
   url?: string | null;
   description?: string;
   source?: string;
+  sourceId?: string | null;
   salaryMin?: number | null;
   salaryMax?: number | null;
 }
@@ -33,4 +39,5 @@ export interface UpdateJobInput {
   location?: string | null;
   remote?: string;
   source?: string;
+  sourceId?: string | null;
 }
