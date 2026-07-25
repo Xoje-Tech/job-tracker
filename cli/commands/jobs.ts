@@ -1,6 +1,5 @@
 import { Command } from "commander";
 import { client } from "@cliApi/client.js";
-import child_process from "node:child_process";
 
 export const jobsCommand = new Command("jobs").description("Manage job listings");
 
@@ -152,56 +151,38 @@ jobsCommand
     }
   });
 
-interface ScrapedJobCard {
-  id: string;
-  title: string;
-  company: string;
-  location: string;
-  url: string;
-}
-
 jobsCommand
   .command("search")
-  .description("Search jobs on LinkedIn")
+  .description("Search jobs on external platforms")
   .option("-q, --query <query>", "Search query")
   .option("-l, --location <location>", "Location to search")
   .option("-n, --limit <limit>", "Limit results")
+  .option("-s, --sources <sources>", "Comma-separated sources to search")
   .action(async (opts) => {
     if (!opts.location) {
       console.error("❌ Error: --location is required");
       process.exit(1);
     }
     try {
-      const args = ["run", ".agents/skills/linkedin-search/cli/src/cli.ts", "search"];
-      if (opts.query) {
-        args.push("--query", opts.query);
-      }
-      args.push("--location", opts.location);
-      if (opts.limit) {
-        args.push("--limit", opts.limit);
-      }
-      args.push("--format", "json");
+      const res = await client.searchExternalJobs({
+        query: opts.query,
+        location: opts.location,
+        limit: opts.limit ? Number(opts.limit) : undefined,
+        sources: opts.sources ? opts.sources.split(",") : undefined,
+      });
 
-      const res = child_process.spawnSync("bun", args, { encoding: "utf8" });
-      if (res.error) {
-        throw new Error(`Failed to run scraper: ${res.error.message}`);
-      }
-      if (res.status !== 0) {
-        throw new Error(`Scraper exited with code ${res.status}: ${res.stderr}`);
-      }
-
-      const data = JSON.parse(res.stdout);
-      const results = (data.results || []) as ScrapedJobCard[];
+      const results = res.data || [];
       if (results.length === 0) {
         console.log("No jobs found.");
       } else {
         console.table(
           results.map((r) => ({
-            id: r.id,
+            id: r.sourceId,
+            source: r.source,
             title: r.title,
             company: r.company,
-            location: r.location,
-            url: r.url,
+            location: r.location || "—",
+            url: r.url || "—",
           })),
         );
       }
@@ -213,42 +194,31 @@ jobsCommand
 
 jobsCommand
   .command("import")
-  .description("Import jobs from LinkedIn into database")
+  .description("Import jobs from external platforms into database")
   .option("-q, --query <query>", "Search query")
   .option("-l, --location <location>", "Location to search")
   .option("-n, --limit <limit>", "Limit results")
+  .option("-s, --sources <sources>", "Comma-separated sources to search")
   .action(async (opts) => {
     if (!opts.location) {
       console.error("❌ Error: --location is required");
       process.exit(1);
     }
     try {
-      const args = ["run", ".agents/skills/linkedin-search/cli/src/cli.ts", "search"];
-      if (opts.query) {
-        args.push("--query", opts.query);
-      }
-      args.push("--location", opts.location);
-      if (opts.limit) {
-        args.push("--limit", opts.limit);
-      }
-      args.push("--format", "json");
+      const res = await client.searchExternalJobs({
+        query: opts.query,
+        location: opts.location,
+        limit: opts.limit ? Number(opts.limit) : undefined,
+        sources: opts.sources ? opts.sources.split(",") : undefined,
+      });
 
-      const res = child_process.spawnSync("bun", args, { encoding: "utf8" });
-      if (res.error) {
-        throw new Error(`Failed to run scraper: ${res.error.message}`);
-      }
-      if (res.status !== 0) {
-        throw new Error(`Scraper exited with code ${res.status}: ${res.stderr}`);
-      }
-
-      const data = JSON.parse(res.stdout);
-      const results = (data.results || []) as ScrapedJobCard[];
+      const results = res.data || [];
       const total = results.length;
       let imported = 0;
       let skipped = 0;
 
       for (const card of results) {
-        const check = await client.listJobs({ source: "LINKEDIN", sourceId: card.id });
+        const check = await client.listJobs({ source: card.source, sourceId: card.sourceId });
         if (check.data && check.data.length > 0) {
           skipped++;
         } else {
@@ -257,9 +227,9 @@ jobsCommand
             company: card.company,
             location: card.location,
             url: card.url,
-            source: "LINKEDIN",
-            sourceId: card.id,
-            description: "Imported from LinkedIn - URL: " + card.url,
+            source: card.source,
+            sourceId: card.sourceId,
+            description: `Imported from ${card.source} - URL: ${card.url || "—"}`,
           });
           imported++;
         }

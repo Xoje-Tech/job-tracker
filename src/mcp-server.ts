@@ -1,12 +1,12 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
-import child_process from "child_process";
 import { prisma } from "@/shared/lib/prisma.js";
 import { PrismaJobRepository } from "@/modules/jobs/infrastructure/persistence/prisma-job-repository.js";
 import { ListJobsUseCase } from "@/modules/jobs/application/use-cases/list-jobs.js";
 import { CreateJobUseCase } from "@/modules/jobs/application/use-cases/create-job.js";
 import { UpdateJobUseCase } from "@/modules/jobs/application/use-cases/update-job.js";
+import { SearchExternalJobsUseCase } from "@/modules/jobs/application/use-cases/search-external-jobs.js";
 
 // Safe redirect of all console.log to console.error
 console.log = (...args) => {
@@ -94,84 +94,47 @@ const jobRepository = new PrismaJobRepository(prisma);
 const listJobsUseCase = new ListJobsUseCase(jobRepository);
 const createJobUseCase = new CreateJobUseCase(jobRepository);
 const updateJobUseCase = new UpdateJobUseCase(jobRepository);
+const searchExternalJobsUseCase = new SearchExternalJobsUseCase();
 
 // Define tools
 server.registerTool(
   "job_tracker_search_external_jobs",
   {
-    description: "Search external job listings on LinkedIn using the guest scraper.",
+    description: "Search external job listings on active portals using pluggable scrapers.",
     inputSchema: SearchSchema,
   },
   async (rawArgs) => {
     const args = SearchSchema.parse(rawArgs);
-    const cmdArgs = ["run", ".agents/skills/linkedin-search/cli/src/cli.ts", "search"];
-    if (args.query) {
-      cmdArgs.push("--query", args.query);
-    }
-    cmdArgs.push("--location", args.location);
-    if (args.limit) {
-      cmdArgs.push("--limit", String(args.limit));
-    }
-    cmdArgs.push("--format", "json");
-
-    const res = child_process.spawnSync("bun", cmdArgs, { shell: false, encoding: "utf8" });
-    if (res.error) {
-      throw new Error(`Failed to run scraper: ${res.error.message}`);
-    }
-    if (res.status !== 0) {
-      throw new Error(`Scraper exited with code ${res.status}: ${res.stderr}`);
-    }
-
-    try {
-      const parsed = JSON.parse(res.stdout);
-      return toSuccessResult(parsed.results || []);
-    } catch (err: any) {
-      throw new Error(`Failed to parse scraper output: ${err.message}`);
-    }
+    const result = await searchExternalJobsUseCase.execute({
+      query: args.query,
+      location: args.location,
+      limit: args.limit,
+    });
+    return toSuccessResult(result);
   }
 );
 
 server.registerTool(
   "job_tracker_import_external_job",
   {
-    description: "Search LinkedIn jobs and import them into the database while skipping duplicates.",
+    description: "Search active portals and import jobs into the database while skipping duplicates.",
     inputSchema: SearchSchema,
   },
   async (rawArgs) => {
     const args = SearchSchema.parse(rawArgs);
-    const cmdArgs = ["run", ".agents/skills/linkedin-search/cli/src/cli.ts", "search"];
-    if (args.query) {
-      cmdArgs.push("--query", args.query);
-    }
-    cmdArgs.push("--location", args.location);
-    if (args.limit) {
-      cmdArgs.push("--limit", String(args.limit));
-    }
-    cmdArgs.push("--format", "json");
-
-    const res = child_process.spawnSync("bun", cmdArgs, { shell: false, encoding: "utf8" });
-    if (res.error) {
-      throw new Error(`Failed to run scraper: ${res.error.message}`);
-    }
-    if (res.status !== 0) {
-      throw new Error(`Scraper exited with code ${res.status}: ${res.stderr}`);
-    }
-
-    let results: any[] = [];
-    try {
-      const parsed = JSON.parse(res.stdout);
-      results = parsed.results || [];
-    } catch (err: any) {
-      throw new Error(`Failed to parse scraper output: ${err.message}`);
-    }
+    const results = await searchExternalJobsUseCase.execute({
+      query: args.query,
+      location: args.location,
+      limit: args.limit,
+    });
 
     let imported = 0;
     let skipped = 0;
 
     for (const card of results) {
       const check = await jobRepository.findAll({
-        source: "LINKEDIN",
-        sourceId: card.id,
+        source: card.source as any,
+        sourceId: card.sourceId,
         limit: 1,
         offset: 0,
       });
@@ -184,9 +147,9 @@ server.registerTool(
           company: card.company,
           location: card.location,
           url: card.url,
-          source: "LINKEDIN",
-          sourceId: card.id,
-          description: `Imported from LinkedIn - URL: ${card.url}`,
+          source: card.source,
+          sourceId: card.sourceId,
+          description: `Imported from ${card.source} - URL: ${card.url || "—"}`,
         });
         imported++;
       }
