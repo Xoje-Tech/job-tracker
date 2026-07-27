@@ -111,13 +111,14 @@ server.registerTool(
       limit: args.limit,
     });
     return toSuccessResult(result);
-  }
+  },
 );
 
 server.registerTool(
   "job_tracker_import_external_job",
   {
-    description: "Search active portals and import jobs into the database while skipping duplicates.",
+    description:
+      "Search active portals and import jobs into the database while skipping duplicates.",
     inputSchema: SearchSchema,
   },
   async (rawArgs) => {
@@ -160,7 +161,7 @@ server.registerTool(
       imported,
       skipped,
     });
-  }
+  },
 );
 
 server.registerTool(
@@ -179,7 +180,7 @@ server.registerTool(
       offset: args.offset,
     });
     return toSuccessResult(result);
-  }
+  },
 );
 
 server.registerTool(
@@ -199,7 +200,7 @@ server.registerTool(
       source: args.source,
     });
     return toSuccessResult(job);
-  }
+  },
 );
 
 server.registerTool(
@@ -219,7 +220,7 @@ server.registerTool(
     } catch (err: any) {
       return toErrorResult(err.message || "Job not found");
     }
-  }
+  },
 );
 
 async function main() {

@@ -41,8 +41,22 @@ describe("jobs subcommand CLI tests", () => {
     it("should call client.searchExternalJobs and display table", async () => {
       const spySearch = vi.spyOn(client, "searchExternalJobs").mockResolvedValue({
         data: [
-          { sourceId: "1", source: "LINKEDIN", title: "Job A", company: "Company A", location: "Berlin", url: "url-a" },
-          { sourceId: "2", source: "MERCADONA", title: "Job B", company: "Company B", location: "Berlin", url: "url-b" },
+          {
+            sourceId: "1",
+            source: "LINKEDIN",
+            title: "Job A",
+            company: "Company A",
+            location: "Berlin",
+            url: "url-a",
+          },
+          {
+            sourceId: "2",
+            source: "MERCADONA",
+            title: "Job B",
+            company: "Company B",
+            location: "Berlin",
+            url: "url-b",
+          },
         ],
       });
 
@@ -68,8 +82,22 @@ describe("jobs subcommand CLI tests", () => {
       });
 
       expect(mockConsoleTable).toHaveBeenCalledWith([
-        { id: "1", source: "LINKEDIN", title: "Job A", company: "Company A", location: "Berlin", url: "url-a" },
-        { id: "2", source: "MERCADONA", title: "Job B", company: "Company B", location: "Berlin", url: "url-b" },
+        {
+          id: "1",
+          source: "LINKEDIN",
+          title: "Job A",
+          company: "Company A",
+          location: "Berlin",
+          url: "url-a",
+        },
+        {
+          id: "2",
+          source: "MERCADONA",
+          title: "Job B",
+          company: "Company B",
+          location: "Berlin",
+          url: "url-b",
+        },
       ]);
       expect(mockExit).not.toHaveBeenCalled();
       spySearch.mockRestore();

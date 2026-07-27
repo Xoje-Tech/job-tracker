@@ -24,7 +24,7 @@ export class SearchExternalJobsUseCase {
 
   constructor(
     skillsDir: string = "/home/hermes/projects/job-tracker/.agents/skills",
-    timeoutMs: number = 10000
+    timeoutMs: number = 10000,
   ) {
     this.skillsDir = skillsDir;
     this.timeoutMs = timeoutMs;
@@ -40,12 +40,13 @@ export class SearchExternalJobsUseCase {
         const rawFiles = fs.readdirSync(this.skillsDir);
         scraperDirs = rawFiles.filter(
           (file) =>
-            fs.statSync(path.join(this.skillsDir, file)).isDirectory() &&
-            file.endsWith("-search")
+            fs.statSync(path.join(this.skillsDir, file)).isDirectory() && file.endsWith("-search"),
         );
       }
     } catch (err) {
-      console.error(`Failed to scan skills directory: ${err instanceof Error ? err.message : String(err)}`);
+      console.error(
+        `Failed to scan skills directory: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
 
     // Map scraper directories to sources (e.g., "linkedin-search" -> "LINKEDIN")
@@ -62,9 +63,7 @@ export class SearchExternalJobsUseCase {
     let scrapersToRun = discoveredScrapers;
     if (sources && sources.length > 0) {
       const uppercaseRequested = sources.map((s) => s.toUpperCase());
-      scrapersToRun = discoveredScrapers.filter((s) =>
-        uppercaseRequested.includes(s.source)
-      );
+      scrapersToRun = discoveredScrapers.filter((s) => uppercaseRequested.includes(s.source));
 
       // Log warning for requested sources that were not found
       const discoveredSources = discoveredScrapers.map((s) => s.source);
@@ -104,7 +103,7 @@ export class SearchExternalJobsUseCase {
     source: string,
     query: string | undefined,
     location: string,
-    limit: number | undefined
+    limit: number | undefined,
   ): Promise<ExternalJobCard[]> {
     const cliPath = path.join(this.skillsDir, dirName, "cli", "src", "cli.ts");
     return new Promise<ExternalJobCard[]>((resolve) => {
@@ -171,7 +170,9 @@ export class SearchExternalJobsUseCase {
 
           resolve(normalized);
         } catch (err) {
-          console.error(`Failed to parse JSON output from scraper ${source}: ${err instanceof Error ? err.message : String(err)}. Output was: ${stdout}`);
+          console.error(
+            `Failed to parse JSON output from scraper ${source}: ${err instanceof Error ? err.message : String(err)}. Output was: ${stdout}`,
+          );
           resolve([]);
         }
       });
