@@ -110,7 +110,7 @@ describe("Jobs API", () => {
 
     it("should return 200 OK with aggregated external jobs on success", async () => {
       const mockResult = [
-        { sourceId: "mock-1", source: "LINKEDIN", title: "Mock Dev", company: "Mock Co" }
+        { sourceId: "mock-1", source: "LINKEDIN", title: "Mock Dev", company: "Mock Co" },
       ];
       const spy = vi
         .spyOn(SearchExternalJobsUseCase.prototype, "execute")

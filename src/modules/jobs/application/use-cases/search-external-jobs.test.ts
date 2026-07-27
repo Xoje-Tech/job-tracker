@@ -45,12 +45,12 @@ describe("SearchExternalJobsUseCase", () => {
   const createMockProcess = (stdoutData: string, exitCode = 0, delay = 0) => {
     const proc = new EventEmitter() as any;
     const stdout = new Readable({
-      read() {}
+      read() {},
     });
     proc.stdout = stdout;
-    
+
     const stderr = new Readable({
-      read() {}
+      read() {},
     });
     proc.stderr = stderr;
 
@@ -62,7 +62,7 @@ describe("SearchExternalJobsUseCase", () => {
       }
       stdout.push(null);
       stderr.push(null);
-      
+
       setTimeout(() => {
         proc.emit("close", exitCode);
       }, 0);
@@ -74,13 +74,25 @@ describe("SearchExternalJobsUseCase", () => {
   it("should dynamically discover and run all scrapers in parallel when no sources filter is passed", async () => {
     const linkedinData = JSON.stringify({
       results: [
-        { id: "li-1", title: "LinkedIn Engineer", company: "LinkedIn Corp", location: "Remote", url: "url-li" }
-      ]
+        {
+          id: "li-1",
+          title: "LinkedIn Engineer",
+          company: "LinkedIn Corp",
+          location: "Remote",
+          url: "url-li",
+        },
+      ],
     });
     const mercadonaData = JSON.stringify({
       results: [
-        { id: "mer-1", title: "Mercadona Dev", company: "Mercadona", location: "Valencia", url: "url-mer" }
-      ]
+        {
+          id: "mer-1",
+          title: "Mercadona Dev",
+          company: "Mercadona",
+          location: "Valencia",
+          url: "url-mer",
+        },
+      ],
     });
 
     vi.mocked(spawn).mockImplementation((_cmd, args) => {
@@ -103,7 +115,7 @@ describe("SearchExternalJobsUseCase", () => {
       title: "LinkedIn Engineer",
       company: "LinkedIn Corp",
       location: "Remote",
-      url: "url-li"
+      url: "url-li",
     });
     expect(result).toContainEqual({
       sourceId: "mer-1",
@@ -111,15 +123,21 @@ describe("SearchExternalJobsUseCase", () => {
       title: "Mercadona Dev",
       company: "Mercadona",
       location: "Valencia",
-      url: "url-mer"
+      url: "url-mer",
     });
   });
 
   it("should filter scrapers based on the sources query parameter (case-insensitive)", async () => {
     const linkedinData = JSON.stringify({
       results: [
-        { id: "li-1", title: "LinkedIn Engineer", company: "LinkedIn Corp", location: "Remote", url: "url-li" }
-      ]
+        {
+          id: "li-1",
+          title: "LinkedIn Engineer",
+          company: "LinkedIn Corp",
+          location: "Remote",
+          url: "url-li",
+        },
+      ],
     });
 
     vi.mocked(spawn).mockImplementation(() => {
@@ -137,8 +155,14 @@ describe("SearchExternalJobsUseCase", () => {
   it("should gracefully handle a scraper that fails (e.g. non-zero exit code) and return other results", async () => {
     const linkedinData = JSON.stringify({
       results: [
-        { id: "li-1", title: "LinkedIn Engineer", company: "LinkedIn Corp", location: "Remote", url: "url-li" }
-      ]
+        {
+          id: "li-1",
+          title: "LinkedIn Engineer",
+          company: "LinkedIn Corp",
+          location: "Remote",
+          url: "url-li",
+        },
+      ],
     });
 
     vi.mocked(spawn).mockImplementation((_cmd, args) => {
@@ -161,8 +185,14 @@ describe("SearchExternalJobsUseCase", () => {
   it("should gracefully handle a scraper that outputs invalid JSON", async () => {
     const linkedinData = JSON.stringify({
       results: [
-        { id: "li-1", title: "LinkedIn Engineer", company: "LinkedIn Corp", location: "Remote", url: "url-li" }
-      ]
+        {
+          id: "li-1",
+          title: "LinkedIn Engineer",
+          company: "LinkedIn Corp",
+          location: "Remote",
+          url: "url-li",
+        },
+      ],
     });
 
     vi.mocked(spawn).mockImplementation((_cmd, args) => {
@@ -185,8 +215,14 @@ describe("SearchExternalJobsUseCase", () => {
   it("should enforce a timeout and kill the hanging scraper", async () => {
     const linkedinData = JSON.stringify({
       results: [
-        { id: "li-1", title: "LinkedIn Engineer", company: "LinkedIn Corp", location: "Remote", url: "url-li" }
-      ]
+        {
+          id: "li-1",
+          title: "LinkedIn Engineer",
+          company: "LinkedIn Corp",
+          location: "Remote",
+          url: "url-li",
+        },
+      ],
     });
 
     const mockKill = vi.fn();
@@ -201,7 +237,10 @@ describe("SearchExternalJobsUseCase", () => {
       }
     });
 
-    const useCase = new SearchExternalJobsUseCase("/home/hermes/projects/job-tracker/.agents/skills", 100); // 100ms timeout for testing
+    const useCase = new SearchExternalJobsUseCase(
+      "/home/hermes/projects/job-tracker/.agents/skills",
+      100,
+    ); // 100ms timeout for testing
     const result = await useCase.execute({ location: "Madrid" });
 
     expect(result).toHaveLength(1);
@@ -213,9 +252,21 @@ describe("SearchExternalJobsUseCase", () => {
   it("should deduplicate job listings with identical source and sourceId", async () => {
     const linkedinData = JSON.stringify({
       results: [
-        { id: "li-1", title: "LinkedIn Engineer", company: "LinkedIn Corp", location: "Remote", url: "url-li" },
-        { id: "li-1", title: "Duplicate LinkedIn Engineer", company: "LinkedIn Corp", location: "Remote", url: "url-li" }
-      ]
+        {
+          id: "li-1",
+          title: "LinkedIn Engineer",
+          company: "LinkedIn Corp",
+          location: "Remote",
+          url: "url-li",
+        },
+        {
+          id: "li-1",
+          title: "Duplicate LinkedIn Engineer",
+          company: "LinkedIn Corp",
+          location: "Remote",
+          url: "url-li",
+        },
+      ],
     });
 
     vi.mocked(spawn).mockImplementation(() => {
