@@ -70,7 +70,7 @@ API available at `http://localhost:3000`.
 
 ## Environment Variables
 
-Configured in `.env` (loaded via Zod in `src/config/env.ts`):
+Configured in `.env` (loaded via Zod in `src/shared/config/env.ts`):
 
 | Variable | Required | Default | Notes |
 |----------|----------|---------|-------|
@@ -153,17 +153,15 @@ job-tracker/
 ├── src/
 │   ├── index.ts          # Bootstrap: connect DB + listen
 │   ├── server.ts         # createApp() factory (testable)
-│   ├── config/
-│   │   └── env.ts        # Zod-validated env vars
-│   ├── lib/
-│   │   └── prisma.ts     # Prisma client singleton
-│   ├── middleware/
-│   │   └── error.ts      # Global error handler
-│   └── routes/
-│       ├── health.ts     # Health endpoints
-│       ├── jobs.ts       # Jobs CRUD
-│       ├── applications.ts # Applications CRUD + interviews
-│       └── companies.ts  # Companies CRUD
+│   ├── shared/
+│   │   ├── config/env.ts # Zod-validated env vars
+│   │   ├── lib/prisma.ts # Prisma client singleton
+│   │   ├── middleware/error.ts # Global error handler
+│   │   └── routes/health.ts # Health routes
+│   └── modules/
+│       ├── jobs/         # Hexagonal Jobs module (entities, use-cases, routes)
+│       ├── applications/ # Hexagonal Applications module (entities, use-cases, routes)
+│       └── companies/    # Hexagonal Companies module (entities, use-cases, routes)
 ├── cli/
 │   ├── index.ts          # CLI entry point (Commander)
 │   ├── api/
@@ -177,9 +175,6 @@ job-tracker/
 │   └── schema.prisma     # Database schema (11 models, 12 enums)
 ├── tests/
 │   ├── setup.ts          # Test bootstrap (dotenv, NODE_ENV=test)
-│   └── routes/
-│       ├── health.test.ts
-│       └── jobs.test.ts
 ├── agent-skill/
 │   └── SKILL.md          # Hermes skill definition
 ├── openspec/
@@ -253,9 +248,9 @@ job-tracker/
 5. Update the spec checklist when done
 
 ### When adding a new API endpoint:
-1. Add route handler in `src/routes/`
-2. Register route in `src/server.ts`
-3. Add tests in `tests/routes/`
+1. Add route handler inside the specific hexagonal module `src/modules/{domain}/interface/routes/`
+2. Register route in `src/server.ts` (the testable application factory composition root)
+3. Add co-located tests next to the route handler as `<route-name>.test.ts`
 4. Update `openspec/specs/` with the new endpoint
 5. Update `agent-skill/SKILL.md` with curl examples
 
